@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ponder — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f0f0d;
+  --card: #151619;
+  --surface: #1c1e22;
+  --text: #f0ede6;
+  --muted: #5a5853;
+  --border: rgba(255,255,255,0.07);
+  --gold: #C9A84C;
+  --red: #FF4444;
+  --green: #3DBA6F;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SLIDES ── */
+.slide {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+
+/* slide number */
+.slide-num {
+  position: absolute;
+  top: 32px; left: 40px;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+/* next arrow */
+.next-arrow {
+  position: absolute;
+  bottom: 32px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+  -webkit-user-select: none; user-select: none;
+}
+.next-arrow:hover { opacity: 0.7; }
+.next-arrow span { font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.next-arrow svg { animation: bounce 2s ease-in-out infinite; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+/* ── FADE IN ON SCROLL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.25s; }
+.reveal-delay-3 { transition-delay: 0.4s; }
+.reveal-delay-4 { transition-delay: 0.55s; }
+
+/* ══════════════════════════
+   SLIDE 1 — TITLE
+══════════════════════════ */
+#slide1 { background: var(--bg); }
+
+.title-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.title-main {
+  font-family: var(--serif);
+  font-size: clamp(64px, 10vw, 120px);
+  line-height: 0.95;
+  letter-spacing: -2px;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+.title-sub {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-bottom: 48px;
+}
+
+.title-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tag {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+/* ══════════════════════════
+   SLIDE 2 — PROBLEM
+══════════════════════════ */
+#slide2 { background: var(--bg); }
+
+.problem-label {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 32px;
+  align-self: flex-start;
+  max-width: 680px;
+  width: 100%;
+}
+
+.problem-stat {
+  font-family: var(--serif);
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 1.1;
+  color: var(--text);
+  max-width: 680px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.problem-stat em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.problem-body {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 560px;
+  width: 100%;
+  margin-bottom: 48px;
+}
+
+.pain-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 560px;
+  width: 100%;
+}
+
+.pain-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+
+.pain-icon {
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+  width: 20px;
+  text-align: center;
+}
+
+.pain-text {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+/* ══════════════════════════
+   SLIDE 3 — HOW IT WORKS
+══════════════════════════ */
+#slide3 { background: var(--bg); }
+
+.how-label {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  align-self: flex-start;
+  max-width: 680px;
+  width: 100%;
+}
+
+.how-title {
+  font-family: var(--serif);
+  font-size: clamp(32px, 5vw, 56px);
+  color: var(--text);
+  line-height: 1.1;
+  max-width: 680px;
+  width: 100%;
+  margin-bottom: 48px;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 560px;
+  width: 100%;
+}
+
+.step {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+  padding: 0;
+}
+
+.step-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.step-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--muted);
+  margin-top: 18px;
+  flex-shrink: 0;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.step.active .step-dot { background: var(--gold); border-color: var(--gold); }
+
+.step-line {
+  width: 1px;
+  flex: 1;
+  background: var(--border);
+  margin-top: 4px;
+}
+
+.step:last-child .step-line { display: none; }
+
+.step-content {
+  padding: 14px 0 24px;
+  flex: 1;
+}
+
+.step-num {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.step-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.step-desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ══════════════════════════
+   SLIDE 4 — TECH
+══════════════════════════ */
+#slide4 { background: var(--bg); }
+
+.tech-label {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  align-self: flex-start;
+  max-width: 680px;
+  width: 100%;
+}
+
+.tech-title {
+  font-family: var(--serif);
+  font-size: clamp(32px, 5vw, 52px);
+  color: var(--text);
+  line-height: 1.1;
+  max-width: 680px;
+  width: 100%;
+  margin-bottom: 48px;
+}
+
+.tech-cards {
+  display: flex;
+  gap: 16px;
+  max-width: 680px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.tech-card {
+  flex: 1;
+  min-width: 260px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: border-color 0.2s;
+}
+
+.tech-card:hover { border-color: rgba(255,255,255,0.15); }
+
+.tech-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.tech-card-name {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.9;
+}
+
+.tech-card-badge {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 3px;
+}
+
+.badge-gold { background: rgba(201,168,76,0.12); color: var(--gold); border: 1px solid rgba(201,168,76,0.2); }
+.badge-white { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1); }
+
+.tech-card-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.tech-card-desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.tech-flow {
+  margin-top: 32px;
+  max-width: 680px;
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.flow-step {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.flow-arrow {
+  font-size: 10px;
+  color: var(--border);
+  opacity: 0.6;
+}
+
+.flow-step.hl { color: var(--gold); }
+
+/* ══════════════════════════
+   SLIDE 5 — PROTOTYPE
+══════════════════════════ */
+#slide5 {
+  background: #E6E6E6;
+  padding: 60px 40px;
+}
+
+.proto-label {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+  margin-bottom: 8px;
+  align-self: flex-start;
+  max-width: 800px;
+  width: 100%;
+}
+
+.proto-title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 44px);
+  color: #151619;
+  line-height: 1.1;
+  max-width: 800px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.proto-frame {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  max-width: 800px;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── PHONE (embedded) ── */
+.phone-embed {
+  width: 300px;
+  height: 600px;
+  background: #0e0e10;
+  border-radius: 42px;
+  border: 1.5px solid #2c2c30;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset, 0 32px 64px rgba(0,0,0,0.3);
+}
+
+.phone-embed .pe-island {
+  position: absolute; top: 11px; left: 50%;
+  transform: translateX(-50%);
+  width: 82px; height: 24px;
+  background: #000; border-radius: 12px; z-index: 10;
+}
+
+.phone-embed .pe-homebar {
+  position: absolute; bottom: 7px; left: 50%;
+  transform: translateX(-50%);
+  width: 90px; height: 4px;
+  background: rgba(255,255,255,0.18); border-radius: 2px; z-index: 10;
+}
+
+/* App screen inside embed */
+.pe-app {
+  position: absolute; inset: 0;
+  background: #151619;
+  border-radius: 41px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  height: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+.pe-statusbar {
+  height: 44px; padding: 13px 22px 0;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.pe-time { font-size: 10px; font-weight: 500; color: #fff; letter-spacing: 0.02em; }
+.pe-icons { display: flex; gap: 4px; align-items: center; }
+
+.pe-header {
+  padding: 8px 20px 7px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.pe-hdr { font-size: 8px; color: #8E9299; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
+
+.pe-body { flex: 1; position: relative; overflow: hidden; min-height: 0; }
+
+.pe-screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+  background: #151619; overflow: hidden;
+}
+.pe-screen.active { transform: translateX(0); }
+.pe-screen.left   { transform: translateX(-100%); }
+#peScreenRecord { transform: translateX(0); }
+
+/* viz */
+.pe-viz { flex: 1; display: flex; align-items: center; justify-content: center; }
+.pe-hud { width: 220px; height: 220px; position: relative; display: flex; align-items: center; justify-content: center; }
+.pe-track { position: absolute; width: 138px; height: 138px; border: 1px dashed rgba(142,146,153,0.3); border-radius: 50%; }
+.pe-pulse-wrap { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+.pe-pulse { position: absolute; width: 48px; height: 48px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; opacity: 0; }
+.pe-hud.is-recording .pe-track { animation: peTrackSpin 60s linear infinite; border-color: rgba(255,255,255,0.1); }
+@keyframes peTrackSpin { from{transform:rotate(0deg);}to{transform:rotate(360deg);} }
+.pe-hud.is-recording .pe-pulse { animation: pePulse 2.2s cubic-bezier(0.215,0.61,0.355,1) infinite; }
+.pe-hud.is-recording .pe-pulse:nth-child(2) { animation-delay: 0.8s; }
+@keyframes pePulse { 0%{transform:scale(1);opacity:0.5;}100%{transform:scale(3);opacity:0;} }
+.pe-hud.is-processing .pe-btn { border-color: #C9A84C; animation: peProcSpin 3s linear infinite; }
+.pe-hud.is-processing .pe-btn-icon { background: #C9A84C; border: none; border-radius: 50%; width: 6px; height: 6px; }
+@keyframes peProcSpin { from{transform:rotate(0deg);}to{transform:rotate(360deg);} }
+
+.pe-btn {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 1px solid #8E9299; background: transparent;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 10;
+  transition: all 0.25s ease;
+  -webkit-user-select: none; user-select: none; outline: none;
+}
+.pe-btn-icon { width: 10px; height: 10px; border-radius: 50%; border: 2px solid #fff; background: transparent; transition: all 0.2s ease; }
+.pe-hud.is-recording .pe-btn { border-color: #FF4444; transform: scale(1.08); }
+.pe-hud.is-recording .pe-btn-icon { background: #FF4444; border: none; border-radius: 2px; width: 11px; height: 11px; }
+
+/* footer */
+.pe-footer { padding: 12px 20px 14px; flex-shrink: 0; }
+.pe-status-lbl { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8E9299; margin-bottom: 4px; }
+.pe-status-lbl.red { color: #FF4444; }
+.pe-status-lbl.gold { color: #C9A84C; }
+.pe-readout { font-size: 11px; color: #fff; line-height: 1.5; min-height: 30px; opacity: 0.8; white-space: pre-wrap; word-break: break-word; }
+.pe-timecode { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 8px; margin-top: 10px; font-size: 9px; letter-spacing: 0.08em; color: #8E9299; }
+
+/* results */
+#peScreenResults { overflow-y: auto; scrollbar-width: none; }
+#peScreenResults::-webkit-scrollbar { display: none; }
+.pe-res { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.07); opacity: 0; animation: peFadeUp 0.35s ease forwards; }
+.pe-res:last-child { border-bottom: none; }
+.pe-res:nth-child(1){animation-delay:0.05s;} .pe-res:nth-child(2){animation-delay:0.15s;} .pe-res:nth-child(3){animation-delay:0.25s;} .pe-res:nth-child(4){animation-delay:0.35s;}
+@keyframes peFadeUp { from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);} }
+.pe-res-lbl { font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: #8E9299; margin-bottom: 8px; }
+.pe-thoughts { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.pe-thought { display: flex; gap: 8px; align-items: flex-start; }
+.pe-t-i { font-size: 8px; color: #8E9299; opacity: 0.4; min-width: 12px; padding-top: 2px; }
+.pe-t-t { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 13px; color: #fff; line-height: 1.4; }
+.pe-actions { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.pe-action { display: flex; gap: 8px; align-items: center; padding: 7px 10px; border: 1px solid rgba(201,168,76,0.14); background: rgba(201,168,76,0.05); border-radius: 5px; }
+.pe-acheck { width: 11px; height: 11px; border: 1px solid rgba(201,168,76,0.4); border-radius: 2px; flex-shrink: 0; cursor: pointer; transition: background 0.15s; }
+.pe-acheck.checked { background: #C9A84C; border-color: #C9A84C; }
+.pe-atext { font-size: 10px; color: #C9A84C; line-height: 1.4; }
+.pe-mood-row { display: flex; align-items: center; gap: 8px; }
+.pe-mood-pip { width: 6px; height: 6px; border-radius: 50%; background: #8E9299; }
+.pe-mood-word { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 17px; color: #fff; }
+.pe-res-footer { padding: 10px 16px 14px; border-top: 1px solid rgba(255,255,255,0.07); display: flex; gap: 8px; align-items: center; flex-shrink: 0; background: #151619; }
+.pe-new-capture-btn { flex: 1; padding: 11px; background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 7px; color: rgba(255,255,255,0.85); font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; }
+.pe-new-capture-btn:hover { background: rgba(255,255,255,0.05); }
+.pe-redo-icon { width: 38px; height: 38px; border: 1px solid rgba(255,68,68,0.2); border-radius: 7px; color: rgba(255,68,68,0.55); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.pe-redo-icon:hover { border-color: rgba(255,68,68,0.45); color: #FF4444; }
+.pe-cal-icon { width: 38px; height: 38px; border: 1px solid rgba(61,186,111,0.2); border-radius: 7px; color: rgba(61,186,111,0.55); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.pe-cal-icon:hover { border-color: rgba(61,186,111,0.45); color: #3DBA6F; }
+.pe-tasks-footer { padding: 10px 16px 14px; border-top: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; background: #151619; }
+.pe-sync-cal-btn { width: 100%; padding: 11px; background: transparent; border: 1px solid rgba(61,186,111,0.25); border-radius: 7px; color: rgba(61,186,111,0.8); font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; }
+.pe-sync-cal-btn:hover { background: rgba(61,186,111,0.05); border-color: rgba(61,186,111,0.4); }
+
+/* history */
+#peScreenHistory { overflow-y: auto; scrollbar-width: none; }
+#peScreenHistory::-webkit-scrollbar { display: none; }
+.pe-hist-header { padding: 14px 20px 8px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.pe-hist-title { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8E9299; }
+.pe-hist-body { padding: 10px 20px; }
+.pe-hist-empty { font-size: 10px; color: #8E9299; opacity: 0.4; text-align: center; padding: 30px 0; }
+.pe-entry { padding: 8px 10px; background: #1c1e22; border: 1px solid rgba(255,255,255,0.06); border-radius: 7px; margin-bottom: 7px; cursor: pointer; }
+.pe-entry-top { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.pe-entry-time { font-size: 8px; color: #8E9299; }
+.pe-entry-mood { display: flex; align-items: center; gap: 4px; }
+.pe-entry-dot { width: 5px; height: 5px; border-radius: 50%; }
+.pe-entry-mword { font-size: 9px; color: #8E9299; font-style: italic; font-family: 'Instrument Serif', serif; }
+.pe-entry-thought { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 11px; color: #fff; opacity: 0.8; }
+
+/* bottom nav */
+.pe-nav {
+  height: 58px; border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex; flex-shrink: 0; background: #151619; padding-bottom: 3px;
+}
+.pe-nav-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; cursor: pointer; opacity: 0.4; transition: opacity 0.2s;
+  -webkit-user-select: none; user-select: none;
+}
+.pe-nav-tab.active { opacity: 1; }
+.pe-nav-icon { font-size: 13px; line-height: 1; }
+.pe-nav-lbl { font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; color: #8E9299; }
+.pe-nav-tab.active .pe-nav-lbl { color: #fff; }
+
+.pe-toast { position: absolute; bottom: 55px; left: 50%; transform: translateX(-50%) translateY(50px); background: #1e1a1a; border: 1px solid rgba(255,68,68,0.2); color: #FF4444; padding: 5px 10px; border-radius: 5px; font-size: 8px; white-space: nowrap; transition: transform 0.3s; z-index: 20; }
+.pe-toast.show { transform: translateX(-50%) translateY(0); }
+
+/* right side label */
+.proto-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 280px;
+  flex: 1;
+}
+
+.proto-info-item {}
+.pi-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.pi-text { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--text); line-height: 1.4; }
+.pi-sub { font-size: 11px; color: var(--muted); line-height: 1.6; margin-top: 4px; }
+
+/* ══════════════════════════
+   SLIDE 6 — OUTRO
+══════════════════════════ */
+#slide6 { background: var(--bg); }
+
+.outro-eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.outro-title {
+  font-family: var(--serif);
+  font-size: clamp(40px, 7vw, 80px);
+  line-height: 1.0;
+  letter-spacing: -1px;
+  color: var(--text);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.outro-sub {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  margin-bottom: 48px;
+  text-align: center;
+  max-width: 400px;
+}
+
+.outro-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── NAV DOTS ── */
+.nav-dots {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  position: relative;
+}
+.nav-dot::before {
+  content: '';
+  position: absolute;
+  top: -8px; right: -8px; bottom: -8px; left: -8px;
+}
+
+.nav-dot.active {
+  background: rgba(255,255,255,0.7);
+  transform: scale(1.3);
+}
+
+/* on light slide */
+.light-dots .nav-dot { background: rgba(0,0,0,0.15); }
+.light-dots .nav-dot.active { background: rgba(0,0,0,0.6); }
+</style>
+</head>
+<body>
+
+<!-- Nav dots -->
+<div class="nav-dots" id="navDots">
+  <div class="nav-dot active" onclick="goToSlide(0)"></div>
+  <div class="nav-dot" onclick="goToSlide(1)"></div>
+  <div class="nav-dot" onclick="goToSlide(2)"></div>
+  <div class="nav-dot" onclick="goToSlide(3)"></div>
+  <div class="nav-dot" onclick="goToSlide(4)"></div>
+  <div class="nav-dot" onclick="goToSlide(5)"></div>
+</div>
+
+<!-- ══ SLIDE 1: TITLE ══ -->
+<div class="slide" id="slide1" data-slide="0">
+  <div class="slide-num">00 — Ponder</div>
+  <div class="title-eyebrow reveal">Voice AI · Hackathon Demo · 2026</div>
+  <div class="title-main reveal reveal-delay-1">Ponder</div>
+  <div class="title-sub reveal reveal-delay-2">speak your mind. see what's inside.</div>
+  <div class="title-tags reveal reveal-delay-3">
+    <span class="tag">Smallest.ai</span>
+    <span class="tag">Claude API</span>
+    <span class="tag">Voice AI</span>
+  </div>
+  <div class="next-arrow" onclick="goToSlide(1)">
+    <span>next</span>
+    <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+      <path d="M1 1l5 5 5-5" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+<!-- ══ SLIDE 2: PROBLEM ══ -->
+<div class="slide" id="slide2" data-slide="1">
+  <div class="slide-num">01 — Problem</div>
+  <div class="problem-label reveal">The problem</div>
+  <div class="problem-stat reveal reveal-delay-1">Your best thoughts<br>disappear <em>before</em><br>you can capture them.</div>
+  <div class="problem-body reveal reveal-delay-2">
+    You're in the shower. In a meeting. Half asleep. A thought surfaces — clear, important — and then it's gone. Or you try to write it down and the act of writing breaks the thought.
+  </div>
+  <ul class="pain-list">
+    <li class="pain-item reveal reveal-delay-2">
+      <div class="pain-icon">◎</div>
+      <div class="pain-text">Notes apps require structure you don't have mid-thought</div>
+    </li>
+    <li class="pain-item reveal reveal-delay-3">
+      <div class="pain-icon">◎</div>
+      <div class="pain-text">Voice memos are unstructured — you never go back to them</div>
+    </li>
+    <li class="pain-item reveal reveal-delay-4">
+      <div class="pain-icon">◎</div>
+      <div class="pain-text">The mental load of open loops drains focus throughout the day</div>
+    </li>
+  </ul>
+  <div class="next-arrow" onclick="goToSlide(2)">
+    <span>next</span>
+    <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+      <path d="M1 1l5 5 5-5" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+<!-- ══ SLIDE 3: HOW IT WORKS ══ -->
+<div class="slide" id="slide3" data-slide="2">
+  <div class="slide-num">02 — How it works</div>
+  <div class="how-label reveal">How it works</div>
+  <div class="how-title reveal reveal-delay-1">Three steps.<br>Zero friction.</div>
+  <div class="steps">
+    <div class="step active reveal reveal-delay-1">
+      <div class="step-left">
+        <div class="step-dot"></div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-num">Step 01</div>
+        <div class="step-title">Hold &amp; speak</div>
+        <div class="step-desc">Hold anywhere on the screen. Talk freely — no prompts, no structure. Up to 90 seconds. Smallest.ai transcribes your voice in real-time.</div>
+      </div>
+    </div>
+    <div class="step reveal reveal-delay-2">
+      <div class="step-left">
+        <div class="step-dot"></div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-num">Step 02</div>
+        <div class="step-title">Release</div>
+        <div class="step-desc">Claude instantly distills your stream of consciousness into 3 key thoughts, 1–2 clear actions, and a single word for your current tone.</div>
+      </div>
+    </div>
+    <div class="step reveal reveal-delay-3">
+      <div class="step-left">
+        <div class="step-dot"></div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-num">Step 03</div>
+        <div class="step-title">Review</div>
+        <div class="step-desc">Your thoughts, surfaced and organized. Check off actions, revisit your history, see patterns across the day.</div>
+      </div>
+    </div>
+  </div>
+  <div class="next-arrow" onclick="goToSlide(3)">
+    <span>next</span>
+    <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+      <path d="M1 1l5 5 5-5" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+<!-- ══ SLIDE 4: TECH ══ -->
+<div class="slide" id="slide4" data-slide="3">
+  <div class="slide-num">03 — Tech stack</div>
+  <div class="tech-label reveal">Built with</div>
+  <div class="tech-title reveal reveal-delay-1">Two APIs.<br>One seamless experience.</div>
+  <div class="tech-cards">
+    <div class="tech-card reveal reveal-delay-2">
+      <div class="tech-card-header">
+        <div class="tech-card-name">Smallest.ai</div>
+        <div class="tech-card-badge badge-gold">STT</div>
+      </div>
+      <div class="tech-card-title">Real-time voice transcription</div>
+      <div class="tech-card-desc">Lightning-fast streaming speech-to-text. Captures your words as you speak — no wait, no lag. The voice layer that makes hold-to-speak feel instant.</div>
+    </div>
+    <div class="tech-card reveal reveal-delay-3">
+      <div class="tech-card-header">
+        <div class="tech-card-name">Claude API</div>
+        <div class="tech-card-badge badge-white">LLM</div>
+      </div>
+      <div class="tech-card-title">Thought distillation</div>
+      <div class="tech-card-desc">Turns unstructured stream-of-consciousness into structured insight — key thoughts, actionable next steps, and your emotional tone — in under a second.</div>
+    </div>
+  </div>
+  <div class="tech-flow reveal reveal-delay-4">
+    <span class="flow-step">Voice</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step hl">Smallest.ai STT</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Transcript</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step hl">Claude API</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Structured thoughts</span>
+  </div>
+  <div class="next-arrow" onclick="goToSlide(4)">
+    <span>try it</span>
+    <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+      <path d="M1 1l5 5 5-5" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+<!-- ══ SLIDE 5: PROTOTYPE ══ -->
+<div class="slide" id="slide5" data-slide="4">
+  <div class="slide-num" style="color:#8a8a8a;">04 — Live prototype</div>
+  <div class="proto-label reveal">Try it</div>
+  <div class="proto-title reveal reveal-delay-1" style="color:#151619;">Hold anywhere on the phone<br>and speak your mind.</div>
+
+  <div class="proto-frame">
+
+    <!-- Embedded phone -->
+    <div class="phone-embed reveal reveal-delay-2">
+      <div class="pe-island"></div>
+      <div class="pe-homebar"></div>
+      <div class="pe-app">
+
+        <div class="pe-statusbar">
+          <span class="pe-time" id="peClockEl">9:41</span>
+          <div class="pe-icons">
+            <svg width="14" height="10" viewBox="0 0 16 11" fill="none">
+              <rect x="0" y="7" width="3" height="4" rx="0.5" fill="white" opacity="0.4"/>
+              <rect x="4.5" y="4.5" width="3" height="6.5" rx="0.5" fill="white" opacity="0.6"/>
+              <rect x="9" y="2" width="3" height="9" rx="0.5" fill="white" opacity="0.8"/>
+              <rect x="13.5" y="0" width="2.5" height="11" rx="0.5" fill="white"/>
+            </svg>
+            <svg width="20" height="10" viewBox="0 0 22 11" fill="none">
+              <rect x="0.5" y="0.5" width="18" height="10" rx="2.5" stroke="white" stroke-opacity="0.35"/>
+              <rect x="2" y="2" width="13" height="7" rx="1.5" fill="white"/>
+              <path d="M19.5 3.5v4a1.5 1.5 0 000-4z" fill="white" opacity="0.4"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="pe-header">
+          <span class="pe-hdr">P — 01</span>
+          <span class="pe-hdr" id="peHdrRight">AUDIO_IN</span>
+        </div>
+
+        <div class="pe-body">
+
+          <!-- Record -->
+          <div class="pe-screen active" id="peScreenRecord">
+            <div class="pe-viz">
+              <div class="pe-hud" id="peRadialHud">
+                <div class="pe-track"></div>
+                <canvas id="peCanvas" width="220" height="220" style="position:absolute;top:0;left:0;"></canvas>
+                <div class="pe-pulse-wrap">
+                  <div class="pe-pulse"></div>
+                  <div class="pe-pulse"></div>
+                </div>
+                <button class="pe-btn" id="peRecordBtn">
+                  <div class="pe-btn-icon"></div>
+                </button>
+              </div>
+            </div>
+            <div class="pe-footer">
+              <div class="pe-status-lbl" id="peStatusLbl">——</div>
+              <div class="pe-readout" id="peStatusTxt">Hold to speak
+your mind.</div>
+              <div class="pe-timecode">
+                <span id="peTimecode">00:00:00</span>
+                <span id="peLevelEl">— dB</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results -->
+          <div class="pe-screen" id="peScreenResults" style="overflow:hidden;">
+            <div style="flex:1;overflow-y:auto;scrollbar-width:none;">
+              <div class="pe-res">
+                <div class="pe-res-lbl">On your mind</div>
+                <ul class="pe-thoughts" id="peThoughtsList"></ul>
+              </div>
+              <div class="pe-res">
+                <div class="pe-res-lbl">Actions</div>
+                <ul class="pe-actions" id="peActionsList"></ul>
+              </div>
+              <div class="pe-res">
+                <div class="pe-res-lbl">Tone</div>
+                <div class="pe-mood-row">
+                  <div class="pe-mood-pip" id="peMoodPip"></div>
+                  <div class="pe-mood-word" id="peMoodWord"></div>
+                </div>
+              </div>
+            </div>
+            <div class="pe-res-footer">
+              <button class="pe-redo-icon" onclick="peRedo()" title="Redo">↺</button>
+              <button class="pe-cal-icon" onclick="peAddToCalendar(peCurActions)" title="Add to Calendar">⊞</button>
+              <button class="pe-new-capture-btn" onclick="peGoToRecord()">New capture</button>
+            </div>
+          </div>
+
+          <!-- Tasks -->
+          <div class="pe-screen" id="peScreenTasks" style="overflow:hidden;">
+            <div class="pe-hist-header">
+              <div class="pe-hist-title">Tasks</div>
+            </div>
+            <div style="flex:1;overflow-y:auto;scrollbar-width:none;">
+              <div class="pe-hist-body">
+                <div id="peTasksList"><div class="pe-hist-empty">No tasks yet.</div></div>
+              </div>
+            </div>
+            <div class="pe-tasks-footer">
+              <button class="pe-sync-cal-btn" onclick="peAddToCalendar(peHistory.flatMap(e=>e.actions||[]))">Sync all tasks to Calendar</button>
+            </div>
+          </div>
+
+          <!-- History -->
+          <div class="pe-screen" id="peScreenHistory">
+            <div class="pe-hist-header">
+              <div class="pe-hist-title">Today's log</div>
+            </div>
+            <div class="pe-hist-body">
+              <div id="peHistList"><div class="pe-hist-empty">No captures yet.</div></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="pe-nav">
+          <div class="pe-nav-tab active" id="peTabRecord" onclick="peGoToRecord()">
+            <div class="pe-nav-icon">◉</div>
+            <div class="pe-nav-lbl">Capture</div>
+          </div>
+          <div class="pe-nav-tab" id="peTabTasks" onclick="peGoToTasks()">
+            <div class="pe-nav-icon">◻</div>
+            <div class="pe-nav-lbl">Tasks</div>
+          </div>
+          <div class="pe-nav-tab" id="peTabHistory" onclick="peGoToHistory()">
+            <div class="pe-nav-icon">≡</div>
+            <div class="pe-nav-lbl">History</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="pe-toast" id="peToast"></div>
+    </div>
+
+    <!-- Info panel -->
+    <div class="proto-info reveal reveal-delay-3">
+      <div class="proto-info-item">
+        <div class="pi-label">01 — Capture</div>
+        <div class="pi-text">Hold anywhere. Speak freely.</div>
+        <div class="pi-sub">The visualizer reacts to your real voice via mic input.</div>
+      </div>
+      <div class="proto-info-item">
+        <div class="pi-label">02 — Result</div>
+        <div class="pi-text">Release to see your thoughts distilled.</div>
+        <div class="pi-sub">3 thoughts · actions · tone — structured by Claude.</div>
+      </div>
+      <div class="proto-info-item">
+        <div class="pi-label">03 — History</div>
+        <div class="pi-text">Every capture logged for the day.</div>
+        <div class="pi-sub">Tap the ≡ tab after recording to see your session log.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="next-arrow" onclick="goToSlide(5)" style="color:#8a8a8a;">
+    <span style="color:#8a8a8a;">fin</span>
+    <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+      <path d="M1 1l5 5 5-5" stroke="rgba(0,0,0,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+<!-- ══ SLIDE 6: OUTRO ══ -->
+<div class="slide" id="slide6" data-slide="5">
+  <div class="slide-num">05 — Fin</div>
+  <div class="outro-eyebrow reveal">Voice AI HackSprint 2.0</div>
+  <div class="outro-title reveal reveal-delay-1">Think out loud.<br><em style="font-style:italic;color:rgba(240,237,230,0.5);">Ponder</em> the rest.</div>
+  <div class="outro-sub reveal reveal-delay-2">Built in one day with Smallest.ai + Claude API.</div>
+  <div class="outro-tags reveal reveal-delay-3">
+    <span class="tag">Smallest.ai</span>
+    <span class="tag">Claude API</span>
+    <span class="tag">Voice AI HackSprint 2.0</span>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const SMALLEST_API_KEY = 'sk_4da3a63682c599914bfca74ec2b5e22e';
+const CLAUDE_API_KEY   = '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';
+const GOOGLE_CLIENT_ID = '1087550856531-lv8o0fl2q5e06h3ugo1nhft39kgjaj18.apps.googleusercontent.com';
+
+// ── SLIDE NAVIGATION ──
+const slides = document.querySelectorAll('.slide');
+const dots   = document.querySelectorAll('.nav-dot');
+const navDots = document.getElementById('navDots');
+let currentSlide = 0;
+
+function goToSlide(n) {
+  n = Math.max(0, Math.min(slides.length - 1, n));
+  currentSlide = n;
+  slides[n].scrollIntoView({ behavior: 'smooth' });
+  dots.forEach((d, i) => d.classList.toggle('active', i === n));
+  // light dots on slide 5
+  navDots.classList.toggle('light-dots', n === 4);
+}
+
+// keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault(); goToSlide(currentSlide + 1);
+  }
+  if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+    e.preventDefault(); goToSlide(currentSlide - 1);
+  }
+});
+
+// update dots on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const idx = parseInt(entry.target.dataset.slide);
+      currentSlide = idx;
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      navDots.classList.toggle('light-dots', idx === 4);
+    }
+  });
+}, { threshold: 0.5 });
+
+slides.forEach(s => observer.observe(s));
+
+// reveal on scroll
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── PROTOTYPE ENGINE ──
+const SMALLEST = SMALLEST_API_KEY;
+const CLAUDE   = CLAUDE_API_KEY;
+
+const peCanvas = document.getElementById('peCanvas');
+const peCtx = peCanvas.getContext('2d');
+const PCX=110, PCY=110, PBASE_R=82, PBASE_LEN=2, PTICKS=100;
+let peVizRec=false, peVizProc=false;
+let peMicLevel=0, peMicAnalyser=null, peMicData=null, peMicStream=null;
+
+async function peInitMic() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    peMicStream = stream;
+    const ac = new AudioContext();
+    const src = ac.createMediaStreamSource(stream);
+    peMicAnalyser = ac.createAnalyser();
+    peMicAnalyser.fftSize = 256;
+    peMicAnalyser.smoothingTimeConstant = 0.6;
+    peMicData = new Uint8Array(peMicAnalyser.frequencyBinCount);
+    src.connect(peMicAnalyser);
+  } catch(e) { console.warn('Mic unavailable', e); }
+}
+
+function peGetMicLevel() {
+  if (!peMicAnalyser) return 0;
+  peMicAnalyser.getByteFrequencyData(peMicData);
+  let s=0; for(let i=0;i<peMicData.length;i++) s+=peMicData[i];
+  return Math.min(1,(s/peMicData.length)/60);
+}
+
+function peDrawTicks() {
+  peCtx.clearRect(0,0,220,220);
+  const t=Date.now()*0.002;
+  const live=peGetMicLevel();
+  peMicLevel=peMicLevel*0.7+live*0.3;
+  for(let i=0;i<PTICKS;i++){
+    const angle=(i/PTICKS)*Math.PI*2;
+    let noise=0;
+    if(peVizRec){ noise=(Math.sin(i*0.2+t)*Math.cos(i*0.1-t*2)*(18+peMicLevel*36)+peMicLevel*18+Math.random()*3)*0.35; }
+    else if(peVizProc){ noise=Math.sin(i*0.15+t*3)*10; }
+    else{ noise=Math.sin(i*0.1+t)*3+peMicLevel*15*Math.abs(Math.sin(i*0.3+t)); }
+    // Cap at canvas boundary (center=110, base ring=82, max safe extension=25px)
+    const len=Math.min(PBASE_LEN+Math.max(0,noise), 25);
+    peCtx.save(); peCtx.translate(PCX,PCY); peCtx.rotate(angle);
+    peCtx.beginPath(); peCtx.moveTo(0,-PBASE_R); peCtx.lineTo(0,-PBASE_R-len);
+    const ic=peMicLevel>0.05?`rgba(255,255,255,${0.12+peMicLevel*0.45})`:'#2e3035';
+    peCtx.strokeStyle=peVizRec?'rgba(255,255,255,0.85)':peVizProc?'rgba(201,168,76,0.6)':ic;
+    peCtx.lineWidth=1.5; peCtx.stroke(); peCtx.restore();
+  }
+  // Live level meter
+  const lvlEl=document.getElementById('peLevelEl');
+  if(lvlEl){
+    const db=peMicLevel>0.002 ? Math.max(-60,Math.round(20*Math.log10(peMicLevel))) : null;
+    lvlEl.textContent=db!==null ? `${db} dB` : '— dB';
+  }
+  requestAnimationFrame(peDrawTicks);
+}
+
+peInitMic().then(()=>peDrawTicks());
+
+// clock
+function peClock(){
+  const d=new Date(),h=d.getHours()%12||12,m=String(d.getMinutes()).padStart(2,'0');
+  document.getElementById('peClockEl').textContent=`${h}:${m}`;
+}
+peClock(); setInterval(peClock,10000);
+
+// timer
+let peTI, peSec=0;
+function peStartTimer(){
+  const t0=Date.now();
+  peTI=setInterval(()=>{
+    const d=Date.now()-t0,s=Math.floor(d/1000)%60,m=Math.floor(d/60000)%60,ms=Math.floor((d%1000)/10);
+    document.getElementById('peTimecode').textContent=`${pp(m)}:${pp(s)}:${pp(ms)}`;
+    peSec=Math.floor(d/1000); if(peSec>=90) peStop();
+  },50);
+}
+function peStopTimer(){clearInterval(peTI);}
+function pp(n){return String(n).padStart(2,'0');}
+
+// nav
+const peMoodColors={anxious:'#FF4444',overwhelmed:'#FF4444',stressed:'#FF4444',scattered:'#E08A2A',uncertain:'#E08A2A',conflicted:'#D4C44A',calm:'#3DBA6F',focused:'#3DBA6F',clear:'#3DBA6F',energized:'#5ab0d4',excited:'#5ab0d4',happy:'#5ab0d4'};
+const peHistory=[];
+let peCurActions=[], peGCalToken=null, peGCalClient=null, peGCalPending=null;
+
+function peShowScreen(id){
+  const order=['peScreenRecord','peScreenResults','peScreenTasks','peScreenHistory'];
+  order.forEach(sid=>{
+    const el=document.getElementById(sid);
+    el.classList.remove('active','left');
+    if(sid===id) el.classList.add('active');
+    else if(order.indexOf(sid)<order.indexOf(id)) el.classList.add('left');
+  });
+  document.querySelectorAll('.pe-nav-tab').forEach(t=>t.classList.remove('active'));
+  if(id==='peScreenRecord'||id==='peScreenResults') document.getElementById('peTabRecord').classList.add('active');
+  if(id==='peScreenTasks') document.getElementById('peTabTasks').classList.add('active');
+  if(id==='peScreenHistory') document.getElementById('peTabHistory').classList.add('active');
+}
+
+function peGoToRecord(){
+  document.getElementById('peHdrRight').textContent='AUDIO_IN';
+  peShowScreen('peScreenRecord');
+}
+function peGoToTasks(){
+  document.getElementById('peHdrRight').textContent='TASKS';
+  peRenderTasks();
+  peShowScreen('peScreenTasks');
+}
+function peGoToHistory(){
+  document.getElementById('peHdrRight').textContent='LOG';
+  peRenderHistory();
+  peShowScreen('peScreenHistory');
+}
+
+// recording
+const peHub=document.getElementById('peRadialHud');
+const peSLbl=document.getElementById('peStatusLbl');
+const peSText=document.getElementById('peStatusTxt');
+let peMR=null, peChunks=[], peIsRec=false, peRecog=null, peLastTranscript='';
+
+async function peStart(e){
+  if(e) e.preventDefault();
+  if(peIsRec) return;
+  // Reset speech recognition from any previous session
+  if(peRecog){ try{ peRecog.stop(); }catch(e){} peRecog=null; }
+  peIsRec=true; peVizRec=true; peChunks=[]; peLastTranscript='';
+  peHub.classList.add('is-recording');
+  peSetStatus('red','——','Listening...');
+  peStartTimer();
+
+  if(SMALLEST!=='YOUR_SMALLEST_AI_KEY'){
+    try{
+      const stream=peMicStream||(await navigator.mediaDevices.getUserMedia({audio:true}));
+      peMR=new MediaRecorder(stream,{mimeType:'audio/webm'});
+      peMR.addEventListener('dataavailable',e=>{if(e.data.size>0)peChunks.push(e.data);});
+      peMR.start(250);
+      peSmallestStream(stream); return;
+    }catch(err){console.warn(err);}
+  }
+  peWebSpeech();
+}
+
+function peStop(e){
+  if(e) e.preventDefault();
+  if(!peIsRec) return;
+  peIsRec=false; peVizRec=false; peVizProc=true;
+  peStopTimer();
+  peHub.classList.remove('is-recording');
+  peHub.classList.add('is-processing');
+  peSetStatus('gold','——','Thinking...');
+
+  // Close WebSocket stream cleanly
+  if(window._peWs && window._peWs.readyState === WebSocket.OPEN) window._peWs.close();
+
+  if(peMR&&peMR.state!=='inactive'){
+    peMR.stop(); if(peMR.stream!==peMicStream) peMR.stream.getTracks().forEach(t=>t.stop());
+    peMR.addEventListener('stop',async()=>{
+      // Priority: WS/Speech transcript → REST → screen text → give up
+      const screenTxt=peSText.textContent.trim();
+      const validScreen=screenTxt&&screenTxt!=='Listening...'&&screenTxt!=='Hold to speak\nyour mind.'&&screenTxt!=='Thinking...';
+      if(peLastTranscript){
+        console.log('[STT] Using live transcript:',peLastTranscript);
+        await peProcess(peLastTranscript);
+      } else if(validScreen){
+        console.log('[STT] Using screen text:',screenTxt);
+        await peProcess(screenTxt);
+      } else {
+        const blob=new Blob(peChunks,{type:'audio/webm'});
+        const tx=await peTranscribe(blob);
+        console.log('[STT] Using REST transcript:',tx);
+        if(tx) await peProcess(tx);
+        else { peVizProc=false; peHub.classList.remove('is-processing'); peResetStatus(); }
+      }
+    });
+  } else {
+    if(peRecog){ try{ peRecog.stop(); }catch(e){} peRecog=null; }
+    const txt=peSText.textContent.trim();
+    const valid=txt&&txt!=='Listening...'&&txt!=='Hold to speak\nyour mind.'&&txt!=='Thinking...';
+    if(valid){peProcess(txt);}
+    else{peVizProc=false;peHub.classList.remove('is-processing');peResetStatus();}
+  }
+}
+
+function peWebSpeech(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){peShowToast('Use Chrome for voice');peResetStatus();return;}
+  peRecog=new SR(); peRecog.continuous=true; peRecog.interimResults=true;
+  peRecog.onresult=e=>{
+    let t=''; for(let i=0;i<e.results.length;i++) t+=e.results[i][0].transcript+' ';
+    peSText.textContent=t.trim();
+    peLastTranscript=t.trim(); // keep in sync so stop handler can use it
+  };
+  peRecog.onerror=err=>console.warn(err);
+  peRecog.start();
+}
+
+function peSmallestStream(stream){
+  try{
+    // Close any existing WebSocket and clean up its AudioContext nodes
+    if(window._peWs){
+      if(window._peWs._proc) try{ window._peWs._proc.disconnect(); }catch(e){}
+      if(window._peWs._src)  try{ window._peWs._src.disconnect(); }catch(e){}
+      if(window._peWs._ac)   try{ window._peWs._ac.close(); }catch(e){}
+      if(window._peWs.readyState !== WebSocket.CLOSED) window._peWs.close();
+      window._peWs = null;
+    }
+    const ws=new WebSocket(`wss://waves-api.smallest.ai/api/v1/lightning/stream?token=${SMALLEST}&lang=en&sample_rate=16000`);
+    ws.onopen=()=>console.log('[STT] WS connected');
+    ws.onerror=e=>{ console.error('[STT] WS error — falling back to Web Speech',e); wsFallback(); };
+    ws.onclose=e=>{ console.log('[STT] WS closed',e.code,e.reason); if(peIsRec && !peLastTranscript) wsFallback(); };
+    const ac=new AudioContext({sampleRate:16000});
+    ac.resume().then(()=>console.log('[STT] AudioContext state:',ac.state));
+    const src=ac.createMediaStreamSource(stream);
+    const proc=ac.createScriptProcessor(4096,1,1);
+    proc.onaudioprocess=e=>{
+      if(!peIsRec) return;
+      const inp=e.inputBuffer.getChannelData(0);
+      const pcm=new Int16Array(inp.length);
+      for(let i=0;i<inp.length;i++) pcm[i]=Math.max(-32768,Math.min(32767,inp[i]*32768));
+      if(ws.readyState===WebSocket.OPEN) ws.send(pcm.buffer);
+    };
+    src.connect(proc);
+    proc.connect(ac.destination);
+    let live='';
+    ws.onmessage=e=>{try{const d=JSON.parse(e.data);console.log('[STT] msg',d);if(d.text){live+=d.text+' ';peSText.textContent=live.trim();peLastTranscript=live.trim();}}catch(err){}};
+    ws._proc=proc; ws._src=src; ws._ac=ac;
+    window._peWs=ws;
+
+    // Fallback: if WS gives no transcript in 3s, switch to Web Speech API
+    setTimeout(()=>{ if(peIsRec && !peLastTranscript){ console.warn('[STT] No WS transcript — falling back'); wsFallback(); } }, 3000);
+  }catch(err){console.warn('[STT] init error',err); wsFallback();}
+}
+
+function wsFallback(){
+  if(peRecog) return; // already running this session
+  console.log('[STT] Web Speech fallback active');
+  peWebSpeech();
+}
+
+async function peTranscribe(blob){
+  try{
+    // Convert webm blob to array buffer for raw binary upload
+    const buf = await blob.arrayBuffer();
+    const res=await fetch('https://api.smallest.ai/waves/v1/lightning/get_text?language=en',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${SMALLEST}`,'Content-Type':'audio/webm'},
+      body:buf
+    });
+    if(!res.ok) throw new Error(res.status);
+    const d=await res.json(); return d.text||d.transcript||null;
+  }catch(err){console.error('[STT REST]',err);return null;}
+}
+
+async function peProcess(transcript){
+  try{
+    const prompt=`You are a thought-organizer. Voice brain dump below. Return ONLY valid JSON:
+{"thoughts":["string"],"actions":["string"],"mood":"word"}
+Rules: thoughts=1-3 items based on complexity (1 for a single focused topic, 2-3 only for genuinely multi-topic input), max 12 words each, directly reflect what was said. actions=0-2 concrete verb-first tasks max 10 words (omit array items if nothing actionable). mood=1 evocative word.
+Dump: "${transcript}"
+JSON only.`;
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':CLAUDE,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok) throw new Error(res.status);
+    const data=await res.json();
+    const raw=data.content[0].text;
+    const jsonStr=raw.match(/\{[\s\S]*\}/)?.[0]||raw.replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(jsonStr);
+    peRender(parsed,transcript);
+  }catch(err){
+    console.error(err);
+    peRender({thoughts:['Too many loops pulling at once','Deadline closer than it feels','Need one clear next step'],actions:['Write down every open loop','Block 30 min to prioritize'],mood:'scattered'},transcript);
+    peShowToast('Demo mode — add API keys');
+  }
+}
+
+function peRender(data,transcript){
+  peVizProc=false; peHub.classList.remove('is-processing');
+  const tl=document.getElementById('peThoughtsList'); tl.innerHTML='';
+  (data.thoughts||[]).forEach((t,i)=>{
+    const li=document.createElement('li'); li.className='pe-thought';
+    li.innerHTML=`<span class="pe-t-i">0${i+1}</span><span class="pe-t-t">${peEsc(t)}</span>`;
+    tl.appendChild(li);
+  });
+  const al=document.getElementById('peActionsList'); al.innerHTML='';
+  (data.actions||[]).forEach(a=>{
+    const li=document.createElement('li'); li.className='pe-action';
+    li.innerHTML=`<div class="pe-acheck" onclick="this.classList.toggle('checked')"></div><span class="pe-atext">${peEsc(a)}</span>`;
+    al.appendChild(li);
+  });
+  peCurActions=data.actions||[];
+  const mk=(data.mood||'').toLowerCase();
+  document.getElementById('peMoodPip').style.background=peMoodColors[mk]||'#8E9299';
+  document.getElementById('peMoodWord').textContent=data.mood||'';
+  const now=new Date();
+  peHistory.unshift({time:`${now.getHours()%12||12}:${String(now.getMinutes()).padStart(2,'0')} ${now.getHours()>=12?'PM':'AM'}`,thoughts:data.thoughts||[],actions:data.actions||[],mood:data.mood||''});
+  peResetStatus();
+  document.getElementById('peHdrRight').textContent='OUTPUT';
+  peShowScreen('peScreenResults');
+}
+
+function peRedo(){
+  if(peHistory.length>0) peHistory.shift();
+  peGoToRecord();
+}
+
+function peShowResult(entry){
+  peCurActions=entry.actions||[];
+  const tl=document.getElementById('peThoughtsList'); tl.innerHTML='';
+  (entry.thoughts||[]).forEach((t,i)=>{
+    const li=document.createElement('li'); li.className='pe-thought';
+    li.innerHTML=`<span class="pe-t-i">0${i+1}</span><span class="pe-t-t">${peEsc(t)}</span>`;
+    tl.appendChild(li);
+  });
+  const al=document.getElementById('peActionsList'); al.innerHTML='';
+  (entry.actions||[]).forEach(a=>{
+    const li=document.createElement('li'); li.className='pe-action';
+    li.innerHTML=`<div class="pe-acheck" onclick="this.classList.toggle('checked')"></div><span class="pe-atext">${peEsc(a)}</span>`;
+    al.appendChild(li);
+  });
+  const mk=(entry.mood||'').toLowerCase();
+  document.getElementById('peMoodPip').style.background=peMoodColors[mk]||'#8E9299';
+  document.getElementById('peMoodWord').textContent=entry.mood||'';
+  document.getElementById('peHdrRight').textContent='OUTPUT';
+  peShowScreen('peScreenResults');
+}
+
+function peRenderTasks(){
+  const list=document.getElementById('peTasksList');
+  const allActions=peHistory.flatMap(e=>e.actions||[]);
+  if(allActions.length===0){list.innerHTML='<div class="pe-hist-empty">No tasks yet.</div>';return;}
+  list.innerHTML='';
+  allActions.forEach(a=>{
+    const li=document.createElement('li'); li.className='pe-action'; li.style.marginBottom='5px';
+    li.innerHTML=`<div class="pe-acheck" onclick="this.classList.toggle('checked')"></div><span class="pe-atext">${peEsc(a)}</span>`;
+    list.appendChild(li);
+  });
+}
+
+function peRenderHistory(){
+  const list=document.getElementById('peHistList');
+  if(peHistory.length===0){list.innerHTML='<div class="pe-hist-empty">No captures yet.</div>';return;}
+  list.innerHTML='';
+  peHistory.forEach(entry=>{
+    const mk=entry.mood.toLowerCase();
+    const color=peMoodColors[mk]||'#8E9299';
+    const div=document.createElement('div'); div.className='pe-entry';
+    div.innerHTML=`<div class="pe-entry-top"><span class="pe-entry-time">${entry.time}</span><div class="pe-entry-mood"><div class="pe-entry-dot" style="background:${color};width:5px;height:5px;border-radius:50%;"></div><span class="pe-entry-mword">${entry.mood}</span></div></div><div class="pe-entry-thought">${peEsc(entry.thoughts[0]||'')}</div>`;
+    div.onclick=()=>peShowResult(entry);
+    list.appendChild(div);
+  });
+}
+
+function peSetStatus(c,l,t){
+  peSLbl.className='pe-status-lbl'+(c?' '+c:'');
+  peSLbl.textContent=l; peSText.textContent=t;
+}
+function peResetStatus(){peSetStatus('','——','Hold to speak\nyour mind.');}
+function peEsc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function peShowToast(msg){
+  const t=document.getElementById('peToast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ── GOOGLE CALENDAR ──
+function peOnGisLoad(){ peInitGCal(); }
+function peInitGCal(){
+  if(!window.google?.accounts?.oauth2) return;
+  peGCalClient=google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:'https://www.googleapis.com/auth/calendar.events',
+    callback:(resp)=>{
+      if(resp.error){peShowToast('Calendar auth failed');return;}
+      peGCalToken=resp.access_token;
+      if(peGCalPending){peSyncEvents(peGCalPending);peGCalPending=null;}
+    }
+  });
+}
+function peAddToCalendar(actions){
+  if(!actions||!actions.length){peShowToast('No actions to sync');return;}
+  if(!peGCalClient) peInitGCal();
+  if(!peGCalClient){peShowToast('Calendar not ready — GIS not loaded');return;}
+  peGCalPending=actions;
+  if(peGCalToken){peSyncEvents(actions);peGCalPending=null;}
+  else peGCalClient.requestAccessToken();
+}
+async function peSyncEvents(actions){
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const d=new Date(); d.setDate(d.getDate()+1); d.setHours(9,0,0,0);
+  let ok=0;
+  for(const a of actions){
+    const end=new Date(d.getTime()+30*60000);
+    try{
+      const r=await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
+        method:'POST',
+        headers:{'Authorization':`Bearer ${peGCalToken}`,'Content-Type':'application/json'},
+        body:JSON.stringify({summary:a,start:{dateTime:d.toISOString(),timeZone:tz},end:{dateTime:end.toISOString(),timeZone:tz},reminders:{useDefault:true}})
+      });
+      if(r.status===401){peGCalToken=null;peShowToast('Re-auth needed');return;}
+      if(r.ok) ok++;
+    }catch(e){console.error(e);}
+  }
+  peShowToast(`${ok} task${ok!==1?'s':''} added to Calendar`);
+}
+
+// hold anywhere on phone embed
+const pePhoneEl = document.querySelector('.phone-embed');
+const peCaptureScr = document.getElementById('peScreenRecord');
+
+peCaptureScr.addEventListener('mousedown',(e)=>{if(e.target.closest('.pe-nav')) return; peStart();});
+peCaptureScr.addEventListener('mouseup',()=>peStop());
+peCaptureScr.addEventListener('mouseleave',()=>{if(peIsRec) peStop();});
+peCaptureScr.addEventListener('touchstart',(e)=>{if(e.target.closest('.pe-nav')) return; peStart(e);},{passive:false});
+peCaptureScr.addEventListener('touchend',(e)=>peStop(e),{passive:false});
+peCaptureScr.addEventListener('contextmenu',e=>e.preventDefault());
+
+// init
+document.getElementById('peScreenRecord').className='pe-screen active';
+document.getElementById('peScreenResults').className='pe-screen';
+document.getElementById('peScreenTasks').className='pe-screen';
+document.getElementById('peScreenHistory').className='pe-screen';
+</script>
+<script src="https://accounts.google.com/gsi/client" async onload="peOnGisLoad()"></script>
+</body>
+</html>
